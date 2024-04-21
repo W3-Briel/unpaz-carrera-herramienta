@@ -1,4 +1,5 @@
-from class_Materia import *
+from class_Materias import Materia
+from Bexport_Bimport import Export
 
 ##           codigo,asignatura,regimen,horas_semanales,correlativas,año
 
@@ -51,14 +52,11 @@ m41 = Materia(6041,"Optativa II","Cuatrimestral",4,[],5)
 m42 = Materia(6042,"Dirección Estratégica","Cuatrimestral",4,[6036],5)
 m43 = Materia(6043,"Trabajo Final de Grado","Cuatrimestral",6,[],5)
 
-# LGTI_MATERIAS= [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,
-#                 m11,m12,m13,m14,m15,m16,m17,m18,m19,m20,
-#                 m21,m22,m23,m24,m25,m26,m27,m28,
-#                 m29,m30,m31,m32,m33,m34,m35,m36,m37,m38,
-#                 m39,m40,m41,m42,m43
-#                 ]
+LGTI_MATERIAS= [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,
+                m11,m12,m13,m14,m15,m16,m17,m18,m19,m20,
+                m21,m22,m23,m24,m25,m26,m27,m28,
+                m29,m30,m31,m32,m33,m34,m35,m36,m37,m38,
+                m39,m40,m41,m42,m43
+                ]
 
-# lgti = Plan_de_estudio("LGTI")
-
-# lgti.set_materias(LGTI_MATERIAS)
-# lgti.exportar_materias()
+Export(LGTI_MATERIAS,"LGTI")
