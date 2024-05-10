@@ -5,6 +5,12 @@ from class_Materias import Materia
 
 def buscar_obj_materias(codigos: list,plan_de_estudio: list):
     obj_materias = []
+    cod_agregados = []
+
     for materia in plan_de_estudio:
-        if materia.get_codigo() in codigos: obj_materias.append(materia)
+        m_codigo = materia.get_codigo()
+        if (m_codigo in codigos) and (m_codigo not in cod_agregados): 
+            cod_agregados.append(m_codigo)
+            obj_materias.append(materia)
+
     return obj_materias

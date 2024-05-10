@@ -6,7 +6,7 @@ class Materia:
         
         self.importancia = 0
     def __str__(self):
-        return f"codigo {self.codigo}| año {self.año} | asignatura {self.asignatura}"
+        return f"codigo {self.codigo}| año {self.año} | asignatura {self.asignatura} | importancia {self.importancia}"
 
     ## getters
     def get_codigo(self): return self.codigo
