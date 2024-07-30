@@ -6,3 +6,6 @@
 * se podran ver materias desbloqueadas para cursar
 * se podra ver la importancia curricular de la materia
 * mas cositas (?
+
+
+mas o menos quiero tener todo para finales del año 2024 y antes de iniciar el primer cuatrimestre del año 2025
