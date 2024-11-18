@@ -1,12 +1,18 @@
 from class_Alumno import GestionAlumno
+import requests as r
 
-## Con la instancia "alumno" gestionamos y calculamos la importancia de las materias aprobadas, y desbloqueadas.
-alumno1 = GestionAlumno("Angel",[1,4,3,5,7,8],"COMERCIO_ELECTRONICO")
-# den = GestionAlumno("den",[6001,6002,6003,6004,6005,6006,6007,6008,6038,6010,6019],"LGTI")
+google_sheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzPj8uSYB44A6gnN2JkoYYrdkFKy5hQyS60OAby5Db014n3tuJRaAKjSxlHq-20WWprHsU6qW4uK7M/pub?output=csv"
+response = r.get(google_sheets)
 
-for i in alumno1.get_materias_desbloqueadas(): print(i)
+alumnos_carrera_materias = response.text.replace("\r","").strip(",").split("\n")[1::]
+for alumno_text in alumnos_carrera_materias:
+    aux = alumno_text.split(",")
+    alumno = {
+        "nombre": aux[0],
+        "materias": aux[2:-1],
+        "carrera": aux[1]
+    }
+    print(alumno)
+    instancia = GestionAlumno(alumno["nombre"],alumno["materias"],alumno["carrera"])
 
-# paulina = GestionAlumno("Paulina",[6001],"LGTI")
-
-## metodo para ver las materias que podrian cursar la instancia alumno1 con una lista de otros alumnos
-# for i in alumno1.interseccion_materias_desbloqueadas([den]): print(i)
+    for i in instancia.get_materias_desbloqueadas(): print(i)
