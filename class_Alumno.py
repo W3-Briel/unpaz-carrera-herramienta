@@ -25,7 +25,8 @@ class GestionAlumno(Alumno):
         ## si no esta aprobada se prosigue a ver si es una materia desbloqueada.
         self.plan_de_estudio = Import(super().get_carrera()).get_load()
         for materia in self.plan_de_estudio:
-            agregar_materia = (materia.get_codigo() in self.cod_materias_aprob) and (len(self.cod_materias_aprob) > len(self.materias_aprob))    
+            ## convierto a str materia.get_codigo porque cuando le paso las materias, es una lista de str.
+            agregar_materia = (str(materia.get_codigo()) in self.cod_materias_aprob) and (len(self.cod_materias_aprob) > len(self.materias_aprob))
             if agregar_materia:
                 self.materias_aprob.append(materia)
                 continue
@@ -39,7 +40,6 @@ class GestionAlumno(Alumno):
         calc_importancia = self.materias_aprob+self.materias_desbloqueadas
         for importancia in calc_importancia:
             importancia.set_importancia(self.cod_list_correlativas.count(importancia.get_codigo()))
-
     ##getters
     def get_materias_aprob(self): return self.materias_aprob
     def get_materias_desbloqueadas(self): return self.materias_desbloqueadas
