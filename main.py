@@ -5,14 +5,15 @@ google_sheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzPj8uSYB44A6g
 response = r.get(google_sheets)
 
 alumnos_carrera_materias = response.text.replace("\r","").strip(",").split("\n")[1::]
-for alumno_text in alumnos_carrera_materias:
-    aux = alumno_text.split(",")
-    alumno = {
-        "nombre": aux[0],
-        "materias": aux[2:-1],
-        "carrera": aux[1]
-    }
-    print(alumno)
-    instancia = GestionAlumno(alumno["nombre"],alumno["materias"],alumno["carrera"])
 
-    for i in instancia.get_materias_desbloqueadas(): print(i)
+for i,alumno_text in enumerate(alumnos_carrera_materias):
+    aux = alumno_text.split(",")
+    alumnos_carrera_materias[i] = {"nombre": aux[0],
+                                   "materias": aux[2:-1],
+                                   "carrera": aux[1]
+                                   }
+    print(f" {i}: {alumnos_carrera_materias[i]["nombre"]}")
+
+aux = alumnos_carrera_materias[int(input("indice del alumno: "))]
+instancia_alumno = GestionAlumno(aux["nombre"],aux["materias"],aux["carrera"])
+for i in instancia_alumno.get_materias_desbloqueadas(): print(i)
