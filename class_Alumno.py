@@ -15,6 +15,9 @@ class GestionAlumno(Alumno):
     def __init__(self,nombre: str, cod_materias_aprob: list, carrera: str):
         super().__init__(nombre, cod_materias_aprob, carrera)
 
+        self.cod_materias_aprob = []
+        for cod in cod_materias_aprob: self.cod_materias_aprob.append(int(cod))
+
         self.materias_aprob = []
         self.cod_list_correlativas = []
 
@@ -25,12 +28,11 @@ class GestionAlumno(Alumno):
         ## si no esta aprobada se prosigue a ver si es una materia desbloqueada.
         self.plan_de_estudio = Import(super().get_carrera()).get_load()
         for materia in self.plan_de_estudio:
-            ## convierto a str materia.get_codigo porque cuando le paso las materias, es una lista de str.
-            agregar_materia = (str(materia.get_codigo()) in self.cod_materias_aprob) and (len(self.cod_materias_aprob) > len(self.materias_aprob))
+            agregar_materia = (materia.get_codigo() in self.cod_materias_aprob) and (len(self.cod_materias_aprob) > len(self.materias_aprob))
             if agregar_materia:
                 self.materias_aprob.append(materia)
                 continue
-            m_desbloqueada = set(cod_materias_aprob).issuperset(materia.get_correlativas())
+            m_desbloqueada = set(self.cod_materias_aprob).issuperset(materia.get_correlativas())
             if m_desbloqueada or (len(materia.get_correlativas()) == 0): 
                 self.materias_desbloqueadas.append(materia)
                 self.cod_materias_desbloqueadas.append(materia.get_codigo())
