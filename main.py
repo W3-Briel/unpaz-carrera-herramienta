@@ -4,12 +4,12 @@ import requests as r
 google_sheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzPj8uSYB44A6gnN2JkoYYrdkFKy5hQyS60OAby5Db014n3tuJRaAKjSxlHq-20WWprHsU6qW4uK7M/pub?output=csv"
 response = r.get(google_sheets)
 
-alumnos_carrera_materias = response.text.replace("\r","").split("\n")[1::]
+alumnos_carrera_materias = response.text.replace("\r","").split("\n")[1:]
 alumnos_head = []
 for i,alumno_text in enumerate(alumnos_carrera_materias):
     aux = alumno_text.strip(",").split(",")
     alumnos_carrera_materias[i] = {"nombre": aux[0],
-                                   "materias": aux[2:-1],
+                                   "materias": aux[2:],
                                    "carrera": aux[1]
                                    }
     alumnos_head.append(f" {i}: {alumnos_carrera_materias[i]["nombre"]}")
@@ -39,3 +39,6 @@ while True:
         case "2":
             alumno = seleccionar_alumno()
             for m in alumno.get_materias_aprob(): print(m)
+        case _:
+            print("\n"*10,"bueno hace lo que quieras. chau")
+            break

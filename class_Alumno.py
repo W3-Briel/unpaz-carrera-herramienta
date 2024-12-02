@@ -54,10 +54,10 @@ class GestionAlumno(Alumno):
         interseccion = set(self.get_cod_materias_desbloqueadas())
         m_temp = list()
 
-        for alumno in list_alumnos:
+        for compañero in list_alumnos:
             ## metemos las instancias de Materias en m_temp, para luego no iterar en todas las materias del plan de estudio
-            m_temp += alumno.get_materias_desbloqueadas()
-            interseccion = interseccion.intersection(alumno.get_cod_materias_desbloqueadas())
+            m_temp += compañero.get_materias_desbloqueadas()
+            interseccion = interseccion.intersection(compañero.get_cod_materias_desbloqueadas())
         
         obj_interseccion_materias = buscar_obj_materias(list(interseccion),m_temp); del m_temp
 
