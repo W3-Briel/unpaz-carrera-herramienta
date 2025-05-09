@@ -1,3 +1,7 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/W3-Briel/unpaz-carrera-herramienta)
+
+
+
 # Plan Futuro
 
 Este es un plan a futuro para el desarrollo de la plataforma. Se aceptan contribuciones y sugerencias para mejorar el proyecto.
