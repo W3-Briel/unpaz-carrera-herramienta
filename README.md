@@ -23,3 +23,15 @@ Se planea tener todas estas funcionalidades implementadas para finales del año 
 ---
 
 Si tienes ideas o quieres contribuir, ¡eres bienvenido! Este es un proyecto en constante evolución, y cada aporte es valioso para su crecimiento.
+
+## Prototipo de recomendación de materias
+
+La opción `3` del menú ordena las materias habilitadas por su puntaje de avance. El plan calcula para cada materia su cantidad global de dependencias directas, indirectas y totales. Para cada alumno, el puntaje considera las materias pendientes que dependen de cada candidata, ponderadas por su importancia global y por las `MateriasFaltantes` de cada cadena de correlativas.
+
+Los parámetros iniciales son `alpha = 1` y `decay = 0.5`; son valores de prueba para comparar y calibrar, no una recomendación académica definitiva. `MateriasFaltantes` representa cuántas materias adicionales de una cadena curricular quedarían pendientes antes de habilitar otra materia, no cuatrimestres de cursada. Para estimar ese valor se supone que el alumno completa todas las materias que ya tiene habilitadas antes de avanzar a la siguiente. La opción de menú usa los datos de alumnos existentes; todavía no integra el SIU ni la oferta efectiva de materias por período.
+
+Para ejecutar las pruebas del motor de puntajes:
+
+```text
+python -m unittest test_scoring -v
+```

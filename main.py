@@ -22,7 +22,7 @@ def seleccionar_alumno():
     return instancia_alumno
 
 while True:
-    print("menu: que deseas hacer?\n 0: interseccion alumnos\n 1: materias desbloqueadas\n 2: materias aprob")
+    print("menu: que deseas hacer?\n 0: interseccion alumnos\n 1: materias desbloqueadas\n 2: materias aprob\n 3: recomendar materias")
 
     opt = input("opcion: ").lower()
     match opt:
@@ -39,6 +39,29 @@ while True:
         case "2":
             alumno = seleccionar_alumno()
             for m in alumno.get_materias_aprob(): print(m)
+        case "3":
+            alumno = seleccionar_alumno()
+            for recomendacion in alumno.get_recomendaciones():
+                print(
+                    "{} | puntaje {:.2f}".format(
+                        recomendacion.materia,
+                        recomendacion.puntaje,
+                    )
+                )
+                for contribucion in recomendacion.contribuciones:
+                    estado = (
+                        "desbloqueo inmediato"
+                        if contribucion.materias_faltantes == 0
+                        else "MateriasFaltantes: {}".format(contribucion.materias_faltantes)
+                    )
+                    print(
+                        "  {} | {} | importancia global {} | aporte {:.2f}".format(
+                            estado,
+                            contribucion.materia.get_asignatura(),
+                            contribucion.importancia_global,
+                            contribucion.puntos,
+                        )
+                    )
         case _:
             print("\n"*10,"bueno hace lo que quieras. chau")
             break
