@@ -35,3 +35,21 @@ Para ejecutar las pruebas del motor de puntajes:
 ```text
 python -m unittest test_scoring -v
 ```
+
+## Importación desde SIU Guaraní
+
+La opción `4` abre el SIU en Edge o Chrome. Las credenciales se ingresan manualmente en el navegador; la aplicación no las solicita ni las guarda.
+
+Después del inicio de sesión, presiona Enter en la consola para navegar a `https://estudiantes.unpaz.edu.ar/autogestion/plan_estudio` y extrae las tablas visibles. No se envían credenciales ni datos académicos a servicios externos.
+
+Instala Selenium una sola vez:
+
+```text
+python -m pip install -r requirements.txt
+```
+
+Las pruebas de la extracción de materias se pueden ejecutar con:
+
+```text
+python -m unittest test_siu_guarani -v
+```
