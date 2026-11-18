@@ -1,18 +1,10 @@
 import re
-import time
+import unicodedata
 from dataclasses import dataclass
 
 
 LOGIN_URL = "https://estudiantes.unpaz.edu.ar/autogestion/"
 PLAN_URL = "https://estudiantes.unpaz.edu.ar/autogestion/plan_estudio"
-
-ESTADOS_APROBADOS = (
-    "aprobada",
-    "aprobado",
-    "promocionada",
-    "promocionado",
-)
-
 
 @dataclass(frozen=True)
 class TablaSiu:
@@ -26,6 +18,22 @@ class MateriaAprobadaSiu:
     nombre: str
     tipo_aprobacion: str
     nota: float
+
+
+@dataclass(frozen=True)
+class FilaSiuDescartada:
+    motivo: str
+    celdas: tuple
+
+
+@dataclass(frozen=True)
+class AnalisisSiu:
+    materias_aprobadas: tuple
+    filas_analizadas: int
+    filas_con_codigo: int
+    filas_con_tipo: int
+    filas_con_nota: int
+    descartadas: tuple
 
 
 def _crear_driver():
@@ -70,11 +78,15 @@ def abrir_plan_estudio_siu(timeout_segundos=300):
         )
 
         driver.get(PLAN_URL)
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, timeout_segundos).until(
             lambda navegador: navegador.execute_script(
                 "return document.readyState"
             ) == "complete"
         )
+        if "/plan_estudio" not in driver.current_url:
+            raise RuntimeError(
+                "El SIU no abrió el plan de estudio; verifica que la sesión esté iniciada."
+            )
 
         tablas = _extraer_tablas_html(driver)
         if not tablas:
@@ -135,7 +147,16 @@ def _extraer_tablas_html(driver):
 
 
 def extraer_materias_aprobadas(tablas):
-    materias = []
+    return list(analizar_materias_aprobadas(tablas).materias_aprobadas)
+
+
+def analizar_materias_aprobadas(tablas):
+    materias_por_codigo = {}
+    filas_analizadas = 0
+    filas_con_codigo = 0
+    filas_con_tipo = 0
+    filas_con_nota = 0
+    descartadas = []
 
     for tabla in tablas:
         encabezados = tuple(encabezado.lower() for encabezado in tabla.encabezados)
@@ -143,37 +164,101 @@ def extraer_materias_aprobadas(tablas):
             "codigo": _buscar_indice(encabezados, ("codigo", "código", "cod")),
             "materia": _buscar_indice(encabezados, ("materia", "asignatura", "actividad")),
             "estado": _buscar_indice(encabezados, ("estado", "condicion", "condición")),
-            "nota": _buscar_indice(encabezados, ("nota", "calificacion", "calificación", "resultado")),
+            "nota": _buscar_indice(
+                encabezados,
+                (
+                    "nota",
+                    "calificacion",
+                    "calificación",
+                    "calif",
+                    "resultado",
+                    "puntaje",
+                ),
+            ),
             "tipo": _buscar_indice(encabezados, ("tipo", "instancia", "modalidad", "acta")),
         }
 
         for fila in tabla.filas:
+            if not any(fila):
+                continue
+            filas_analizadas += 1
             texto = " | ".join(fila).lower()
 
             codigo = None
             if indices["codigo"] is not None and indices["codigo"] < len(fila):
                 codigo = _buscar_codigo((fila[indices["codigo"]],), permitir_codigo_corto=True)
-            if codigo is None:
+            else:
                 codigo = _buscar_codigo(fila)
             if codigo is None:
+                _agregar_descartada(descartadas, "no se identificó el código", fila)
                 continue
 
             nombre = _buscar_nombre(fila, indices)
             estado = _buscar_estado(fila, indices)
             tipo = _buscar_tipo(fila, indices)
             nota = _buscar_nota(fila, indices)
+            filas_con_codigo += 1
 
-            if materia_aprobada(tipo, estado, texto, nota):
-                materias.append(
-                    MateriaAprobadaSiu(
-                        codigo=codigo,
-                        nombre=nombre,
-                        tipo_aprobacion=tipo or estado,
-                        nota=nota,
-                    )
+            tipo_aprobacion = _normalizar_tipo_aprobacion(tipo, estado, texto)
+            if tipo_aprobacion:
+                filas_con_tipo += 1
+            if nota is not None:
+                filas_con_nota += 1
+
+            if not tipo_aprobacion:
+                _agregar_descartada(
+                    descartadas, "no se identificó Regularizada o Examen", fila
                 )
+                continue
+            if nota is None:
+                _agregar_descartada(descartadas, "no se identificó una nota", fila)
+                continue
+            if not materia_aprobada(tipo, estado, texto, nota):
+                minimo = 6 if tipo_aprobacion == "Regularizada" else 4
+                _agregar_descartada(
+                    descartadas,
+                    "nota {} menor al mínimo {}".format(nota, minimo),
+                    fila,
+                )
+                continue
 
-    return sorted(set(materias), key=lambda materia: materia.codigo)
+            materia = MateriaAprobadaSiu(
+                codigo=codigo,
+                nombre=nombre,
+                tipo_aprobacion=tipo_aprobacion,
+                nota=nota,
+            )
+            anterior = materias_por_codigo.get(codigo)
+            prioridad = (
+                1 if tipo_aprobacion == "Examen" else 0,
+                nota,
+            )
+            prioridad_anterior = (
+                (
+                    1 if anterior.tipo_aprobacion == "Examen" else 0,
+                    anterior.nota,
+                )
+                if anterior
+                else None
+            )
+            if prioridad_anterior is None or prioridad > prioridad_anterior:
+                materias_por_codigo[codigo] = materia
+
+    return AnalisisSiu(
+        materias_aprobadas=tuple(
+            sorted(materias_por_codigo.values(), key=lambda materia: materia.codigo)
+        ),
+        filas_analizadas=filas_analizadas,
+        filas_con_codigo=filas_con_codigo,
+        filas_con_tipo=filas_con_tipo,
+        filas_con_nota=filas_con_nota,
+        descartadas=tuple(descartadas),
+    )
+
+
+def _agregar_descartada(descartadas, motivo, fila):
+    if len(descartadas) < 10:
+        descartadas.append(FilaSiuDescartada(motivo, tuple(fila)))
 
 
 def _buscar_indice(encabezados, candidatos):
@@ -209,7 +294,7 @@ def _buscar_estado(fila, indices):
         return fila[indice]
     for celda in fila:
         texto = celda.lower()
-        if any(estado in texto for estado in ESTADOS_APROBADOS):
+        if "regulariz" in texto or "examen" in texto:
             return celda
     return ""
 
@@ -217,46 +302,62 @@ def _buscar_estado(fila, indices):
 def _buscar_tipo(fila, indices):
     indice = indices["tipo"]
     if indice is not None and indice < len(fila):
-        return fila[indice]
+        if fila[indice]:
+            return fila[indice]
 
     texto = " ".join(fila).lower()
     if "regulariz" in texto:
         return "Regularizada"
     if "examen" in texto:
         return "Examen"
-    if "promocion" in texto:
-        return "Promocionada"
     return ""
 
 
 def _buscar_nota(fila, indices):
     indice = indices["nota"]
-    if indice is not None and indice < len(fila):
-        coincidencia = re.search(r"(\d+(?:[.,]\d+)?)", fila[indice].replace(",", "."))
-        if coincidencia:
-            return float(coincidencia.group(1))
+    if indice is None or indice >= len(fila):
+        return None
+    return _parsear_nota(fila[indice])
 
-    for celda in fila:
-        coincidencia = re.search(r"\b([1-9]|10)(?:[.,]0)?\b", celda.replace(",", "."))
-        if coincidencia:
-            return float(coincidencia.group(1))
+
+def _parsear_nota(texto):
+    coincidencia = re.fullmatch(
+        r"\s*(10(?:[.,]0+)?|[0-9](?:[.,][0-9]+)?)"
+        r"(?:\s*\([^)]*\))?\s*",
+        texto or "",
+    )
+    if coincidencia:
+        return float(coincidencia.group(1).replace(",", "."))
     return None
 
 
 def materia_aprobada(tipo, estado, texto, nota):
-    tipo_texto = "{} {}".format(tipo or "", estado or "").lower()
-    tipo_texto = "{} {}".format(tipo_texto, texto)
-
     if nota is None:
         return False
 
-    if "regulariz" in tipo_texto:
+    tipo_aprobacion = _normalizar_tipo_aprobacion(tipo, estado, texto)
+    if tipo_aprobacion == "Promocionada":
+        return True
+    if tipo_aprobacion == "Regularizada":
         return nota >= 6
-    if "examen" in tipo_texto:
-        return nota >= 4
-
-    if "promocion" in tipo_texto:
-        return nota >= 4
-    if any(estado_aprobado in tipo_texto for estado_aprobado in ESTADOS_APROBADOS):
+    if tipo_aprobacion == "Examen":
         return nota >= 4
     return False
+
+
+def _normalizar_tipo_aprobacion(tipo, estado, texto):
+    tipo_texto = "{} {} {}".format(tipo or "", estado or "", texto).lower()
+    tipo_texto = "".join(
+        caracter
+        for caracter in unicodedata.normalize("NFKD", tipo_texto)
+        if not unicodedata.combining(caracter)
+    )
+    if re.search(r"\bno\s+promocion", tipo_texto):
+        return ""
+    if "regulariz" in tipo_texto:
+        return "Regularizada"
+    if "examen" in tipo_texto:
+        return "Examen"
+    if "promocion" in tipo_texto:
+        return "Promocionada"
+    return ""

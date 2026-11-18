@@ -1,2 +1,6 @@
 **/__pycache__
 **.txt
+!requirements.txt
+*.sqlite
+*.sqlite3
+*.db

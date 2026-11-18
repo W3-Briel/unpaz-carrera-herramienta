@@ -1,55 +1,46 @@
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/W3-Briel/unpaz-carrera-herramienta)
+# UNPAZ Carrera Herramienta
 
+Aplicación de consola para registrar alumnos, importar materias aprobadas desde SIU Guaraní y recomendar materias mediante el plan de estudios y sus correlativas.
 
+## Requisitos
 
-# Plan Futuro
+- Python 3.12 o posterior.
+- Microsoft Edge o Google Chrome.
+- Acceso a internet para abrir SIU Guaraní.
 
-Este es un plan a futuro para el desarrollo de la plataforma. Se aceptan contribuciones y sugerencias para mejorar el proyecto.
+Instala Selenium:
 
-## Características Planeadas
-
-- **Interfaz gráfica para interacción**: Desarrollo de una interfaz intuitiva y amigable para los usuarios.
-- **Gestión de datos de alumnos y egresados**: Posibilidad de mantener y consultar los datos de alumnos y compañeros ya ingresados en el sistema.
-- **Intersección de materias**: Realización de intersecciones de materias entre alumnos y egresados para análisis y comparativas.
-- **Información y material sobre materias**: Visualización de información y material sobre las materias aportadas por los alumnos.
-- **Visualización de materias desbloqueadas**: Muestra de materias que están disponibles para cursar según los prerrequisitos cumplidos.
-- **Importancia curricular**: Indicadores sobre la importancia curricular de cada materia en los planes de estudio.
-- **Otras funcionalidades**: Se planea agregar más características según las necesidades y sugerencias de la comunidad.
-
-## Plazo de Desarrollo
-
-Se planea tener todas estas funcionalidades implementadas para finales del año 2024 y antes de iniciar el primer cuatrimestre del año 2025.
-
----
-
-Si tienes ideas o quieres contribuir, ¡eres bienvenido! Este es un proyecto en constante evolución, y cada aporte es valioso para su crecimiento.
-
-## Prototipo de recomendación de materias
-
-La opción `3` del menú ordena las materias habilitadas por su puntaje de avance. El plan calcula para cada materia su cantidad global de dependencias directas, indirectas y totales. Para cada alumno, el puntaje considera las materias pendientes que dependen de cada candidata, ponderadas por su importancia global y por las `MateriasFaltantes` de cada cadena de correlativas.
-
-Los parámetros iniciales son `alpha = 1` y `decay = 0.5`; son valores de prueba para comparar y calibrar, no una recomendación académica definitiva. `MateriasFaltantes` representa cuántas materias adicionales de una cadena curricular quedarían pendientes antes de habilitar otra materia, no cuatrimestres de cursada. Para estimar ese valor se supone que el alumno completa todas las materias que ya tiene habilitadas antes de avanzar a la siguiente. La opción de menú usa los datos de alumnos existentes; todavía no integra el SIU ni la oferta efectiva de materias por período.
-
-Para ejecutar las pruebas del motor de puntajes:
-
-```text
-python -m unittest test_scoring -v
-```
-
-## Importación desde SIU Guaraní
-
-La opción `4` abre el SIU en Edge o Chrome. Las credenciales se ingresan manualmente en el navegador; la aplicación no las solicita ni las guarda.
-
-Después del inicio de sesión, presiona Enter en la consola para navegar a `https://estudiantes.unpaz.edu.ar/autogestion/plan_estudio` y extrae las tablas visibles. No se envían credenciales ni datos académicos a servicios externos.
-
-Instala Selenium una sola vez:
-
-```text
+```powershell
 python -m pip install -r requirements.txt
 ```
 
-Las pruebas de la extracción de materias se pueden ejecutar con:
+La aplicación usa SQLite incluido en Python. En el primer inicio crea `datos_academicos.sqlite3` e importa los planes existentes de `bin_Carreras`. La base de datos queda local y está excluida de Git.
 
-```text
-python -m unittest test_siu_guarani -v
+## Uso
+
+Ejecuta:
+
+```powershell
+python main.py
+```
+
+El menú permite:
+
+0. **Cargar alumno:** ingresar el nombre y seleccionar una carrera cargada en la base.
+1. **Cargar materias aprobadas:** seleccionar un alumno, iniciar sesión manualmente en SIU Guaraní, revisar las materias detectadas y confirmar cuáles guardar.
+2. **Recomendación:** seleccionar un alumno y generar el ranking con el scoring existente, usando su plan y las materias aprobadas de SQLite.
+3. **Salir.**
+
+La importación SIU considera aprobadas las materias marcadas como `Promocionada`, `Regularizada` con nota 6 o superior, o `Examen` con nota 4 o superior. Las materias que no coincidan con el plan del alumno se muestran, pero no se guardan. Las credenciales no se solicitan ni se guardan.
+
+Si necesitás volver a importar los planes desde los archivos binarios, cierra la aplicación y elimina manualmente `datos_academicos.sqlite3`. Esto también elimina los alumnos e historiales guardados.
+
+## Scoring
+
+El scoring cuenta las dependencias globales directas e indirectas y ordena las materias habilitadas considerando el impacto en materias pendientes y su distancia de correlativas. Los parámetros iniciales (`alpha = 1`, `decay = 0.5`) son experimentales; las distancias no representan cuatrimestres ni oferta real.
+
+## Pruebas
+
+```powershell
+python -m unittest test_scoring test_siu_guarani test_repositorio -v
 ```
