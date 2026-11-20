@@ -1,0 +1,445 @@
+{
+  "id": "LGTI",
+  "nombre": "Licenciatura en Gesti?n de Tecnolog?as de Informaci?n",
+  "materias": [
+    {
+      "codigo": 6001,
+      "asignatura": "Análisis Matemático I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6002,
+      "asignatura": "Arquitectura de Computadoras I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6003,
+      "asignatura": "Introducción a la Programación",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6004,
+      "asignatura": "Estructuras Discretas",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6005,
+      "asignatura": "Ciencia, Tecnología y Sociedad",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6006,
+      "asignatura": "Análisis Matemático II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        6001
+      ]
+    },
+    {
+      "codigo": 6007,
+      "asignatura": "Álgebra y Geometría Analítica",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        6001
+      ]
+    },
+    {
+      "codigo": 6008,
+      "asignatura": "Algoritmos y Programación",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        6003,
+        6004
+      ]
+    },
+    {
+      "codigo": 6009,
+      "asignatura": "Arquitectura de Computadoras II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        6002,
+        6005
+      ]
+    },
+    {
+      "codigo": 6010,
+      "asignatura": "Inglés I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        6005
+      ]
+    },
+    {
+      "codigo": 6011,
+      "asignatura": "Sistemas Operativos I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6002,
+        6010
+      ]
+    },
+    {
+      "codigo": 6012,
+      "asignatura": "Economía General",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6001
+      ]
+    },
+    {
+      "codigo": 6013,
+      "asignatura": "Inglés II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6010
+      ]
+    },
+    {
+      "codigo": 6014,
+      "asignatura": "Ingeniería de Software I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6003,
+        6004,
+        6005
+      ]
+    },
+    {
+      "codigo": 6015,
+      "asignatura": "Paradigmas de Programación",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6003
+      ]
+    },
+    {
+      "codigo": 6016,
+      "asignatura": "Sistemas Operativos II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6011
+      ]
+    },
+    {
+      "codigo": 6017,
+      "asignatura": "Laboratorio de Programación y Lenguajes",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6015
+      ]
+    },
+    {
+      "codigo": 6018,
+      "asignatura": "Programación Orientada a Objetos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6008
+      ]
+    },
+    {
+      "codigo": 6019,
+      "asignatura": "Base de Datos I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6004,
+        6007
+      ]
+    },
+    {
+      "codigo": 6020,
+      "asignatura": "Administración I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": []
+    },
+    {
+      "codigo": 6021,
+      "asignatura": "Probabilidad y Estadísticas",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        6006,
+        6007
+      ]
+    },
+    {
+      "codigo": 6022,
+      "asignatura": "Comunicaciones y Redes",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 3,
+      "correlativas": [
+        6004,
+        6011
+      ]
+    },
+    {
+      "codigo": 6023,
+      "asignatura": "Ingeniería de Software II",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 3,
+      "correlativas": [
+        6014
+      ]
+    },
+    {
+      "codigo": 6024,
+      "asignatura": "Administración II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        6020
+      ]
+    },
+    {
+      "codigo": 6025,
+      "asignatura": "Laboratorio de Software",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        6014,
+        6018,
+        6019
+      ]
+    },
+    {
+      "codigo": 6026,
+      "asignatura": "Base de Datos II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        6019
+      ]
+    },
+    {
+      "codigo": 6027,
+      "asignatura": "Contabilidad I",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 3,
+      "correlativas": [
+        6020
+      ]
+    },
+    {
+      "codigo": 6028,
+      "asignatura": "Trabajo de Campo",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 3,
+      "correlativas": [
+        6018,
+        6022,
+        6023
+      ]
+    },
+    {
+      "codigo": 6029,
+      "asignatura": "Investigación Operativa",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6021
+      ]
+    },
+    {
+      "codigo": 6030,
+      "asignatura": "Arquitectura Web",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6022
+      ]
+    },
+    {
+      "codigo": 6031,
+      "asignatura": "Seguridad Informática",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6017,
+        6018,
+        6022,
+        6023
+      ]
+    },
+    {
+      "codigo": 6032,
+      "asignatura": "Administración de Recursos Humanos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6020,
+        6024
+      ]
+    },
+    {
+      "codigo": 6033,
+      "asignatura": "Contabilidad Avanzada",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 4,
+      "correlativas": [
+        6027
+      ]
+    },
+    {
+      "codigo": 6034,
+      "asignatura": "Sistemas Inteligentes",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6021,
+        6023
+      ]
+    },
+    {
+      "codigo": 6035,
+      "asignatura": "Gestión de la Tecnología",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": [
+        6022,
+        6023
+      ]
+    },
+    {
+      "codigo": 6036,
+      "asignatura": "Comercialización",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 4,
+      "correlativas": [
+        6020,
+        6024
+      ]
+    },
+    {
+      "codigo": 6037,
+      "asignatura": "Planificación Financiera y Proyecto de Inversión",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 4,
+      "correlativas": [
+        6006,
+        6012,
+        6020,
+        6027
+      ]
+    },
+    {
+      "codigo": 6038,
+      "asignatura": "Optativa I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 4,
+      "correlativas": []
+    },
+    {
+      "codigo": 6039,
+      "asignatura": "Gestión de Proyectos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 5,
+      "correlativas": [
+        6012,
+        6021,
+        6023,
+        6029
+      ]
+    },
+    {
+      "codigo": 6040,
+      "asignatura": "Inteligencia de los Negocios",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 5,
+      "correlativas": [
+        6023,
+        6025,
+        6026
+      ]
+    },
+    {
+      "codigo": 6041,
+      "asignatura": "Optativa II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 5,
+      "correlativas": []
+    },
+    {
+      "codigo": 6042,
+      "asignatura": "Dirección Estratégica",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 5,
+      "correlativas": [
+        6036
+      ]
+    },
+    {
+      "codigo": 6043,
+      "asignatura": "Trabajo Final de Grado",
+      "regimen": "Cuatrimestral",
+      "horas": 6,
+      "anio": 5,
+      "correlativas": []
+    }
+  ]
+}

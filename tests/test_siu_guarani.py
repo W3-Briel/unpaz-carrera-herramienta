@@ -1,6 +1,6 @@
 import unittest
 
-from siu_guarani import (
+from unpaz_carrera.infrastructure.siu_guarani import (
     TablaSiu,
     analizar_materias_aprobadas,
     extraer_materias_aprobadas,

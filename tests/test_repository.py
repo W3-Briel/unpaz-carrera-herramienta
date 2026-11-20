@@ -1,12 +1,15 @@
 import os
+import json
 import sqlite3
+import shutil
 import tempfile
 import unittest
 from contextlib import closing
 
-from scoring import puntuar_materias_cursables
-from siu_guarani import MateriaAprobadaSiu
-from repositorio import RepositorioAcademico
+from unpaz_carrera.domain.scoring import puntuar_materias_cursables
+from unpaz_carrera.infrastructure.siu_guarani import MateriaAprobadaSiu
+from unpaz_carrera.infrastructure.repository import RepositorioAcademico
+from unpaz_carrera.infrastructure.plan_loader import DEFAULT_PLANS_DIRECTORY
 
 
 class RepositorioAcademicoTests(unittest.TestCase):
@@ -143,6 +146,87 @@ class RepositorioAcademicoTests(unittest.TestCase):
                 "tipo_aprobacion"
             ],
             "Promocionada",
+        )
+
+    def test_sincroniza_cambios_del_plan_en_sqlite_y_preserva_historial(self):
+        planes_dir = os.path.join(self.directorio.name, "planes")
+        os.makedirs(planes_dir)
+        for nombre_archivo in ("lgti.json", "comercio_electronico.json"):
+            shutil.copyfile(
+                os.path.join(DEFAULT_PLANS_DIRECTORY, nombre_archivo),
+                os.path.join(planes_dir, nombre_archivo),
+            )
+
+        ruta_db = os.path.join(self.directorio.name, "sincronizacion.sqlite3")
+        repositorio = RepositorioAcademico(ruta_db, planes_dir)
+        alumno_id = repositorio.crear_alumno("Ada", "LGTI")
+        repositorio.guardar_materias_aprobadas(
+            alumno_id,
+            [MateriaAprobadaSiu(6001, "Análisis Matemático I", "Examen", 6)],
+        )
+
+        ruta_plan = os.path.join(planes_dir, "lgti.json")
+        with open(ruta_plan, encoding="utf-8") as archivo:
+            plan = json.load(archivo)
+        plan["materias"][0]["asignatura"] = "Análisis Matemático I actualizado"
+        with open(ruta_plan, "w", encoding="utf-8") as archivo:
+            json.dump(plan, archivo, ensure_ascii=False)
+
+        self.assertEqual(repositorio.sincronizar_planes(), 2)
+        materia = next(
+            materia
+            for materia in repositorio.obtener_plan("LGTI")
+            if materia.get_codigo() == 6001
+        )
+        aprobadas = repositorio.listar_materias_aprobadas(alumno_id)
+
+        self.assertEqual(materia.get_asignatura(), "Análisis Matemático I actualizado")
+        self.assertEqual(len(aprobadas), 1)
+        self.assertEqual(aprobadas[0]["codigo"], 6001)
+
+    def test_no_quita_del_plan_una_materia_con_historial_aprobado(self):
+        planes_dir = os.path.join(self.directorio.name, "planes_con_historial")
+        os.makedirs(planes_dir)
+        for nombre_archivo in ("lgti.json", "comercio_electronico.json"):
+            shutil.copyfile(
+                os.path.join(DEFAULT_PLANS_DIRECTORY, nombre_archivo),
+                os.path.join(planes_dir, nombre_archivo),
+            )
+
+        ruta_db = os.path.join(self.directorio.name, "historial.sqlite3")
+        repositorio = RepositorioAcademico(ruta_db, planes_dir)
+        alumno_id = repositorio.crear_alumno("Ada", "LGTI")
+        repositorio.guardar_materias_aprobadas(
+            alumno_id,
+            [MateriaAprobadaSiu(6001, "Análisis Matemático I", "Examen", 6)],
+        )
+
+        ruta_plan = os.path.join(planes_dir, "lgti.json")
+        with open(ruta_plan, encoding="utf-8") as archivo:
+            plan = json.load(archivo)
+        plan["materias"] = [
+            materia for materia in plan["materias"] if materia["codigo"] != 6001
+        ]
+        for materia in plan["materias"]:
+            materia["correlativas"] = [
+                codigo for codigo in materia["correlativas"] if codigo != 6001
+            ]
+        with open(ruta_plan, "w", encoding="utf-8") as archivo:
+            json.dump(plan, archivo, ensure_ascii=False)
+
+        with self.assertRaisesRegex(ValueError, "historial aprobado"):
+            repositorio.sincronizar_planes()
+
+        self.assertEqual(
+            repositorio.codigos_materias_aprobadas(alumno_id),
+            [6001],
+        )
+        self.assertIn(
+            6001,
+            {
+                materia.get_codigo()
+                for materia in repositorio.obtener_plan("LGTI")
+            },
         )
 
 

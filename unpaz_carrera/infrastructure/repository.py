@@ -1,25 +1,24 @@
-import os
-import pickle
 import sqlite3
 from contextlib import closing
+from pathlib import Path
 
-from class_Materias import Materia
-
-
-DIRECTORIO_PROYECTO = os.path.dirname(os.path.abspath(__file__))
-BASE_DATOS_POR_DEFECTO = os.path.join(
-    DIRECTORIO_PROYECTO, "datos_academicos.sqlite3"
+from unpaz_carrera.domain.materia import Materia
+from unpaz_carrera.infrastructure.plan_loader import (
+    DEFAULT_PLANS_DIRECTORY,
+    PROJECT_ROOT,
+    cargar_planes,
 )
 
-CARRERAS_INICIALES = (
-    ("LGTI", "Licenciatura en Gestión de Tecnologías de Información"),
-    ("COMERCIO_ELECTRONICO", "Comercio Electrónico"),
-)
+
+BASE_DATOS_POR_DEFECTO = PROJECT_ROOT / "datos_academicos.sqlite3"
 
 
 class RepositorioAcademico:
-    def __init__(self, ruta=BASE_DATOS_POR_DEFECTO):
+    def __init__(
+        self, ruta=BASE_DATOS_POR_DEFECTO, directorio_planes=DEFAULT_PLANS_DIRECTORY
+    ):
         self.ruta = ruta
+        self.directorio_planes = Path(directorio_planes)
         self._crear_esquema()
         self._importar_planes_iniciales_si_corresponde()
 
@@ -145,49 +144,95 @@ class RepositorioAcademico:
         if existentes:
             return
 
-        planes = {}
-        for carrera_id, nombre in CARRERAS_INICIALES:
-            ruta_plan = os.path.join(DIRECTORIO_PROYECTO, "bin_Carreras", carrera_id)
-            with open(ruta_plan, "rb") as archivo:
-                planes[carrera_id] = (nombre, pickle.load(archivo))
+        self.sincronizar_planes()
 
+    def sincronizar_planes(self):
+        planes = cargar_planes(self.directorio_planes)
         with closing(self._conectar()) as conexion:
             with conexion:
-                for carrera_id, (nombre, plan) in planes.items():
-                    conexion.execute(
-                        "INSERT INTO carreras (id, nombre) VALUES (?, ?)",
-                        (carrera_id, nombre),
+                for plan in planes:
+                    self._sincronizar_plan(conexion, plan)
+        return len(planes)
+
+    @staticmethod
+    def _sincronizar_plan(conexion, plan):
+        carrera_id = plan.identificador
+        codigos_nuevos = {materia.get_codigo() for materia in plan.materias}
+        codigos_actuales = {
+            fila["codigo"]
+            for fila in conexion.execute(
+                "SELECT codigo FROM materias WHERE carrera_id = ?",
+                (carrera_id,),
+            )
+        }
+        codigos_eliminados = codigos_actuales - codigos_nuevos
+        if codigos_eliminados:
+            placeholders = ",".join("?" for _ in codigos_eliminados)
+            aprobadas = conexion.execute(
+                """
+                SELECT materia_codigo FROM materias_aprobadas
+                WHERE carrera_id = ? AND materia_codigo IN ({})
+                """.format(placeholders),
+                (carrera_id, *sorted(codigos_eliminados)),
+            ).fetchall()
+            if aprobadas:
+                codigos_con_historial = sorted(
+                    {fila["materia_codigo"] for fila in aprobadas}
+                )
+                raise ValueError(
+                    "No se pueden quitar materias con historial aprobado: {}.".format(
+                        codigos_con_historial
                     )
-                    for materia in plan:
-                        conexion.execute(
-                            """
-                            INSERT INTO materias
-                                (carrera_id, codigo, asignatura, regimen, horas, anio)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                            """,
-                            (
-                                carrera_id,
-                                materia.get_codigo(),
-                                materia.get_asignatura(),
-                                materia.get_regimen(),
-                                materia.get_horas(),
-                                materia.get_año(),
-                            ),
-                        )
-                    for materia in plan:
-                        for correlativa in materia.get_correlativas():
-                            conexion.execute(
-                                """
-                                INSERT INTO correlativas
-                                    (carrera_id, materia_codigo, correlativa_codigo)
-                                VALUES (?, ?, ?)
-                                """,
-                                (
-                                    carrera_id,
-                                    materia.get_codigo(),
-                                    int(correlativa),
-                                ),
-                            )
+                )
+
+        conexion.execute(
+            """
+            INSERT INTO carreras (id, nombre) VALUES (?, ?)
+            ON CONFLICT (id) DO UPDATE SET nombre = excluded.nombre
+            """,
+            (carrera_id, plan.nombre),
+        )
+        conexion.execute("DELETE FROM correlativas WHERE carrera_id = ?", (carrera_id,))
+        if codigos_eliminados:
+            placeholders = ",".join("?" for _ in codigos_eliminados)
+            conexion.execute(
+                "DELETE FROM materias WHERE carrera_id = ? AND codigo IN ({})".format(
+                    placeholders
+                ),
+                (carrera_id, *sorted(codigos_eliminados)),
+            )
+
+        for materia in plan.materias:
+            conexion.execute(
+                """
+                INSERT INTO materias
+                    (carrera_id, codigo, asignatura, regimen, horas, anio)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT (carrera_id, codigo) DO UPDATE SET
+                    asignatura = excluded.asignatura,
+                    regimen = excluded.regimen,
+                    horas = excluded.horas,
+                    anio = excluded.anio
+                """,
+                (
+                    carrera_id,
+                    materia.get_codigo(),
+                    materia.get_asignatura(),
+                    materia.get_regimen(),
+                    materia.get_horas(),
+                    materia.get_año(),
+                ),
+            )
+        for materia in plan.materias:
+            for correlativa in materia.get_correlativas():
+                conexion.execute(
+                    """
+                    INSERT INTO correlativas
+                        (carrera_id, materia_codigo, correlativa_codigo)
+                    VALUES (?, ?, ?)
+                    """,
+                    (carrera_id, materia.get_codigo(), correlativa),
+                )
 
     def listar_carreras(self):
         with closing(self._conectar()) as conexion:

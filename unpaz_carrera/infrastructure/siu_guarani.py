@@ -109,12 +109,9 @@ def _normalizar_celda(texto):
 
 
 def _extraer_tablas_html(driver):
-    try:
-        from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.by import By
 
-        elementos = driver.find_elements(By.CSS_SELECTOR, "table")
-    except Exception:
-        return []
+    elementos = driver.find_elements(By.CSS_SELECTOR, "table")
 
     tablas = []
     for elemento in elementos:

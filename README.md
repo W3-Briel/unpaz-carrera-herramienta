@@ -2,6 +2,14 @@
 
 Aplicación de consola para registrar alumnos, importar materias aprobadas desde SIU Guaraní y recomendar materias mediante el plan de estudios y sus correlativas.
 
+## Arquitectura
+
+- `unpaz_carrera/domain`: modelo de materia y scoring.
+- `unpaz_carrera/application`: casos de uso académicos.
+- `unpaz_carrera/infrastructure`: SQLite, carga de planes y acceso al SIU.
+- `data/planes`: definición fuente de los planes en JSON. Al inicializarse la base se cargan a SQLite; el resto de la aplicación usa SQLite.
+- `tests`: pruebas unitarias y de integración.
+
 ## Requisitos
 
 - Python 3.12 o posterior.
@@ -24,6 +32,14 @@ Ejecuta:
 python main.py
 ```
 
+Para aplicar cambios de `data/planes/*.json` a una base existente sin borrar alumnos ni historiales:
+
+```powershell
+python -m unpaz_carrera sincronizar-planes
+```
+
+La sincronización actualiza materias y correlativas en una transacción. Si el plan intenta quitar una materia que figura como aprobada por algún alumno, la operación se cancela y conserva los datos.
+
 El menú permite:
 
 0. **Cargar alumno:** ingresar el nombre y seleccionar una carrera cargada en la base.
@@ -33,7 +49,7 @@ El menú permite:
 
 La importación SIU considera aprobadas las materias marcadas como `Promocionada`, `Regularizada` con nota 6 o superior, o `Examen` con nota 4 o superior. Las materias que no coincidan con el plan del alumno se muestran, pero no se guardan. Las credenciales no se solicitan ni se guardan.
 
-Si necesitás volver a importar los planes desde los archivos binarios, cierra la aplicación y elimina manualmente `datos_academicos.sqlite3`. Esto también elimina los alumnos e historiales guardados.
+Los cambios en los JSON no modifican la base automáticamente: ejecuta el comando de sincronización. Borrar `datos_academicos.sqlite3` elimina también alumnos e historiales y no es necesario para actualizar los planes.
 
 ## Scoring
 
@@ -42,5 +58,5 @@ El scoring cuenta las dependencias globales directas e indirectas y ordena las m
 ## Pruebas
 
 ```powershell
-python -m unittest test_scoring test_siu_guarani test_repositorio -v
+python -m unittest discover -s tests -v
 ```

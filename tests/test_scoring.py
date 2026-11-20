@@ -1,8 +1,7 @@
 import unittest
 
-from Bexport_Bimport import Import
-from class_Materias import Materia
-from scoring import (
+from unpaz_carrera.domain.materia import Materia
+from unpaz_carrera.domain.scoring import (
     calcular_importancias_globales,
     puntuar_materias_cursables,
 )
@@ -44,25 +43,6 @@ class ImportanciasGlobalesTests(unittest.TestCase):
             calcular_importancias_globales(
                 [crear_materia(1, [2]), crear_materia(2, [1])]
             )
-
-    def test_calcula_impacto_para_planes_serializados_existentes(self):
-        plan = Import("LGTI").get_load()
-
-        metricas = calcular_importancias_globales(plan)
-
-        self.assertEqual(len(plan), 43)
-        self.assertEqual(metricas[6003].directas, 3)
-        self.assertEqual(metricas[6003].indirectas, 10)
-        self.assertEqual(metricas[6003].total, 13)
-
-    def test_acepta_el_plan_serializado_de_comercio_electronico(self):
-        plan = Import("COMERCIO_ELECTRONICO").get_load()
-
-        metricas = calcular_importancias_globales(plan)
-
-        self.assertEqual(len(plan), 23)
-        self.assertEqual(len(metricas), 23)
-
 
 class PuntajesRecomendacionTests(unittest.TestCase):
     def setUp(self):

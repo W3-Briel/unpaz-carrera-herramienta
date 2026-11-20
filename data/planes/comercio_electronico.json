@@ -1,0 +1,224 @@
+{
+  "id": "COMERCIO_ELECTRONICO",
+  "nombre": "Comercio Electr?nico",
+  "materias": [
+    {
+      "codigo": 1,
+      "asignatura": "Tecnología y Sociedad",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 2,
+      "asignatura": "Inglés I",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 3,
+      "asignatura": "Principios de Economía",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 4,
+      "asignatura": "Comunicación Institucional",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 5,
+      "asignatura": "Internet: Infraestructura y redes",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 6,
+      "asignatura": "Semántica de las interfaces",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 7,
+      "asignatura": "Introducción al comercio electrónico",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": []
+    },
+    {
+      "codigo": 8,
+      "asignatura": "Usabilidad, seguridad y Estándares Web",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        5
+      ]
+    },
+    {
+      "codigo": 9,
+      "asignatura": "Inglés II",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 1,
+      "correlativas": [
+        2
+      ]
+    },
+    {
+      "codigo": 10,
+      "asignatura": "Investigación de mercado",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        3,
+        7
+      ]
+    },
+    {
+      "codigo": 11,
+      "asignatura": "Marco legal de negocios electrónicos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        7
+      ]
+    },
+    {
+      "codigo": 12,
+      "asignatura": "Gestión del conocimiento",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        1
+      ]
+    },
+    {
+      "codigo": 13,
+      "asignatura": "Desarrollo Web",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        6,
+        8
+      ]
+    },
+    {
+      "codigo": 14,
+      "asignatura": "Formulación, incubación y evaluación de proyectos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        3
+      ]
+    },
+    {
+      "codigo": 15,
+      "asignatura": "Métricas del mundo digital",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": []
+    },
+    {
+      "codigo": 16,
+      "asignatura": "Desarrollo de Productos y Servicios",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        10
+      ]
+    },
+    {
+      "codigo": 17,
+      "asignatura": "Taller de Comunicación",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        4
+      ]
+    },
+    {
+      "codigo": 18,
+      "asignatura": "Desarrollos para Dispositivos móviles",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 2,
+      "correlativas": [
+        13
+      ]
+    },
+    {
+      "codigo": 19,
+      "asignatura": "Calidad y Servicio al Cliente",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        16
+      ]
+    },
+    {
+      "codigo": 20,
+      "asignatura": "Marketing digital",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        17
+      ]
+    },
+    {
+      "codigo": 21,
+      "asignatura": "Taller de Práctica Integradora",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        16,
+        17
+      ]
+    },
+    {
+      "codigo": 22,
+      "asignatura": "Competencias emprendedoras",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        14
+      ]
+    },
+    {
+      "codigo": 23,
+      "asignatura": "Gestión de Proyectos",
+      "regimen": "Cuatrimestral",
+      "horas": 4,
+      "anio": 3,
+      "correlativas": [
+        7,
+        14
+      ]
+    }
+  ]
+}
